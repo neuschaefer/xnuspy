@@ -28,7 +28,7 @@ int main(int argc, char **argv){
 
         char buf[1024];
         memset(buf, 0, sizeof(buf));
-        ssize_t r = read(klog_fd, buf, sizeof(buf));
+        ssize_t r = read(klog_fd, buf, sizeof(buf) - 1);
 
         if(r < 0){
             printf("read failed: %s\n", strerror(errno));
