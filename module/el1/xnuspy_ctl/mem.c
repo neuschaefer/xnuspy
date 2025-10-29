@@ -115,7 +115,7 @@ static int protect_common(uint64_t vaddr, uint64_t size, vm_prot_t prot,
         return 1;
 
     /* Round size up to the nearest page if not already a multiple of PAGE_SIZE */
-    if(size & 0xfff)
+    if(size & ~(PAGE_SIZE - 1))
         size = (size + PAGE_SIZE) & ~(PAGE_SIZE - 1);
 
     uint64_t target_region_cur = vaddr & ~(PAGE_SIZE - 1);
