@@ -11,4 +11,4 @@ TARGET = loader
 SOURCES = loader.c
 
 $(TARGET) : $(SOURCES)
-	$(CC) $(CFLAGS) $(LDFLAGS) $(SOURCES) -o $(TARGET)
+	$(CC) $(CFLAGS) $(SOURCES) $(LDFLAGS) -o $(TARGET)
