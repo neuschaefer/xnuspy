@@ -34,7 +34,7 @@ enum {
     COPYINSTR,
     COPYOUT,
 
-    /* Idential to XNU's implementation */
+    /* Identical to XNU's implementation */
     CURRENT_MAP,
 
     CURRENT_PROC,
