@@ -1627,21 +1627,21 @@ struct pf g_all_pfs[MAXPF][NUM_SUPPORTED_VERSIONS] = {
             5, ipc_port_release_send_finder_13, "__TEXT_EXEC"),
         PF_DECL32("ipc_object_lock/ipc_port_release_send_and_unlock finder iOS 15",
             LISTIZE({
-                0x910006e8,     /* add x8, x23, #1 */
+                0x91000408,     /* add x8, xn, #1 */
                 0xf100091f,     /* cmp x8, 2 */
                 0x540000a3,     /* b.lo 0x1c */
-                0xaa1703e0,     /* mov x0, x23 */
+                0xaa0003e0,     /* mov x0, xn */
                 0x94000000,     /* bl _ipc_object_lock */
-                0xaa1703e0,     /* mov x0, x23 */
+                0xaa0003e0,     /* mov x0, xn */
                 0x94000000      /* bl _ipc_port_release_send_and_unlock */
             }),
             LISTIZE({
+                0xfffffc1f,     /* ignore Rn */
                 0xffffffff,     /* match exactly */
                 0xffffffff,     /* match exactly */
-                0xffffffff,     /* match exactly */
-                0xffffffff,     /* match exactly */
+                0xffe0ffff,     /* ignore Rd */
                 0xfc000000,     /* ignore immediate */
-                0xffffffff,     /* match exactly */
+                0xffe0ffff,     /* ignore Rd */
                 0xfc000000,     /* ignore immediate */
             }),
             7, ipc_port_release_send_finder_15, "__TEXT_EXEC"),
