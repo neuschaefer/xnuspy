@@ -107,26 +107,22 @@ bool vm_map_unwire_nested_finder_15(xnu_pf_patch_t *patch,
     return true;
 }
 
-/* Confirmed working 15.0 */
+/* Confirmed working 15.0-15.8 */
 bool kernel_map_finder_15(xnu_pf_patch_t *patch, void *cacheable_stream){
-    /* Will land in panic_kernel, the first PC relative addressing pair
-     * we see from this point on is for kernel_map */
+    /* Will at a sequence of four calls to _vm_map_page_mask.
+     * Just prior to the calls, _kernel_map is loaded into x0:
+     *   adrp    x26, 0xfffffff006d4e000
+     *   ldr     x26, [x26, #0x460]
+     *   ldr     x0,[x26]
+     */
     uint32_t *opcode_stream = cacheable_stream;
-    uint32_t limit = 50;
-
-    /* adrp or adr */
-    while((*opcode_stream & 0x1f000000) != 0x10000000){
-        if(limit-- == 0)
-            return false;
-
-        opcode_stream++;
-    }
-
     xnu_pf_disable_patch(patch);
 
-    uint64_t *kernel_mapp = (uint64_t *)get_pc_rel_target(opcode_stream);
+    /* get constant pool entry */
+    uint64_t *kernel_mapp = (uint64_t *)get_pc_rel_target(opcode_stream - 2);
 
-    g_kernel_map_addr = xnu_ptr_to_va(kernel_mapp);
+    /* get address in constant pool entry (already a kernel virtual address) */
+    g_kernel_map_addr = *kernel_mapp + kernel_slide;
     
     puts("xnuspy: found kernel_map");
     
