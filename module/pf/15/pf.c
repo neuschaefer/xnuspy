@@ -232,3 +232,19 @@ bool lck_rw_alloc_init_finder_15(xnu_pf_patch_t *patch,
 
     return true;
 }
+
+/* Confirmed working 15.0 - 15.8 */
+bool vm_allocate_external_finder_15(xnu_pf_patch_t *patch,
+        void *cacheable_stream){
+    /* We landed somewhere in IONetworkingFamily */
+    xnu_pf_disable_patch(patch);
+
+    uint32_t *opcode_stream = cacheable_stream;
+    uint32_t *vm_allocate = get_branch_dst_ptr(opcode_stream + 7);
+
+    g_vm_allocate_external_addr = xnu_ptr_to_va(vm_allocate);
+
+    puts("xnuspy: found vm_allocate_external");
+
+    return true;
+}
