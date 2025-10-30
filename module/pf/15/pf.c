@@ -222,26 +222,14 @@ bool proc_ref_rele_finder_15(xnu_pf_patch_t *patch, void *cacheable_stream){
     return true;
 }
 
-/* Confirmed working 15.0 */
+/* Confirmed working 15.0 - 15.8 */
 bool lck_rw_alloc_init_finder_15(xnu_pf_patch_t *patch,
         void *cacheable_stream){
-    /* We landed inside lifs_req_hashtbl_init. The branch to
-     * lck_rw_alloc_init is three instructions down if we see a
-     * lsl w8, w0, #1 less than 20 instructions before where we are */
-    uint32_t *opcode_stream = cacheable_stream;
-    uint32_t *saved_stream = opcode_stream;
-    uint32_t limit = 20;
-
-    while(*opcode_stream != 0x531f7808){
-        if(limit-- == 0)
-            return false;
-
-        opcode_stream--;
-    }
-
+    /* We landed inside OSSymbol::initialize. */
     xnu_pf_disable_patch(patch);
 
-    uint32_t *lck_rw_alloc_init = get_branch_dst_ptr(saved_stream + 3);
+    uint32_t *opcode_stream = cacheable_stream;
+    uint32_t *lck_rw_alloc_init = get_branch_dst_ptr(opcode_stream + 2);
 
     g_lck_rw_alloc_init_addr = xnu_ptr_to_va(lck_rw_alloc_init);
 
