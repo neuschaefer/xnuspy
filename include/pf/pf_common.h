@@ -26,6 +26,7 @@ struct pf {
 
 #define LISTIZE(...) __VA_ARGS__
 
+#ifndef PF_DECL32
 #define PF_DECL32(name, matches, masks, mmcount, callback, seg) \
     { \
         .pf_name = name, \
@@ -39,7 +40,9 @@ struct pf {
         .pf_section = NULL, \
         .pf_unused = 0, \
     }
+#endif
 
+#ifndef PF_DECL_FULL
 #define PF_DECL_FULL(name, matches, masks, mmcount, access, callback, kext, seg, sect) \
     { \
         .pf_name = name, \
@@ -53,6 +56,7 @@ struct pf {
         .pf_section = sect, \
         .pf_unused = 0, \
     }
+#endif
 
 #define PF_UNUSED { .pf_unused = 1 }
 
