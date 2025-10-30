@@ -1302,7 +1302,7 @@ bool vm_allocate_external_finder_13(xnu_pf_patch_t *patch,
     return true;
 }
 
-/* Confirmed working on all kernels 13.0 - 15.0 */
+/* Confirmed working on all kernels 13.0 - 15.8 */
 bool vm_map_deallocate_offsetof_vm_map_refcnt_finder_13(xnu_pf_patch_t *patch,
         void *cacheable_stream){
     /* vm_map_reference does not exist on release kernels because it was
@@ -1318,11 +1318,14 @@ bool vm_map_deallocate_offsetof_vm_map_refcnt_finder_13(xnu_pf_patch_t *patch,
 
     g_vm_map_deallocate_addr = xnu_ptr_to_va(vm_map_deallocate);
 
-    /* Now get the offset of the reference count. Searching
-     * for add xn, x19, #n */
+    /* Now get the offset of the reference count. Searching for
+     *   add x0, xn, #n
+     *   ldxr w8, [x0]
+     */
     uint32_t instr_limit = 100;
 
-    while((*vm_map_deallocate & 0xffc003e0) != 0x91000260){
+    while((vm_map_deallocate[0] & 0xffc0001f) != 0x91000000 &&
+          (vm_map_deallocate[1] & 0xffffffff) != 0x885f7c08){
         if(instr_limit-- == 0)
             return false;
 
