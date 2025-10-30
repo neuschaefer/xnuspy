@@ -2267,16 +2267,30 @@ struct pf g_all_pfs[MAXPF][NUM_SUPPORTED_VERSIONS] = {
                 0xfc000000,     /* ignore immediate */
             }),
             2, vm_allocate_external_finder_13, "__TEXT_EXEC"),
-        PF_DECL32("vm_allocate_external finder iOS 15",
+        PF_DECL_FULL("vm_allocate_external finder iOS 15",
             LISTIZE({
-                0x53187C64,     /* lsr w4, w3, #0x18 */
-                0x14000000,     /* b n */
+                0x2a2003e8,     /* mvn w8, w0 */
+                0x93407d08,     /* sxtw x8, w8 */
+                0x8a170117,     /* and x23, x8, x23 */
+                0xf9400340,     /* ldr x0, [x26] */
+                0xd10163a1,     /* sub x1, x29, #0x58 */
+                0xaa1703e2,     /* mov x2, x23 */
+                0x52800023,     /* mov w3, #1 */
+                0x94000000,     /* bl vm_allocate */
             }),
             LISTIZE({
                 0xffffffff,     /* match exactly */
+                0xffffffff,     /* match exactly */
+                0xffffffff,     /* match exactly */
+                0xffffffff,     /* match exactly */
+                0xffffffff,     /* match exactly */
+                0xffffffff,     /* match exactly */
+                0xffffffff,     /* match exactly */
                 0xfc000000,     /* ignore immediate */
             }),
-            2, vm_allocate_external_finder_13, "__TEXT_EXEC"),
+            8, XNU_PF_ACCESS_32BIT, vm_allocate_external_finder_15,
+            "com.apple.iokit.IONetworkingFamily",
+            "__TEXT_EXEC", NULL),
     },
     {
         PF_DECL32("vm_map_deallocate, offsetof(vm_map_t, refcnt) finder iOS 13",
