@@ -119,20 +119,13 @@ bool kernel_map_finder_15(xnu_pf_patch_t *patch, void *cacheable_stream){
     return true;
 }
 
-/* Confirmed working 15.0 */
+/* Confirmed working 15.0, 15.5 - 15.8 */
 bool vm_deallocate_finder_15(xnu_pf_patch_t *patch, void *cacheable_stream){
-    /* will land in ipc_kmsg_clean_partial. we can only 
-     * search for 8 intructions at a time, so we check
-     * for the 9th instruction (bl _vm_deallocate) */
     xnu_pf_disable_patch(patch);
 
     uint32_t *opcode_stream = cacheable_stream;
 
-    if ((opcode_stream[8] & 0xfc000000) != 0x94000000){
-        return false;
-    }
-
-    uint32_t *vm_deallocate = get_branch_dst_ptr(opcode_stream + 8);
+    uint32_t *vm_deallocate = get_branch_dst_ptr(opcode_stream + 0);
 
     g_vm_deallocate_addr = xnu_ptr_to_va(vm_deallocate);
 
