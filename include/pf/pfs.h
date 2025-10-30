@@ -589,16 +589,18 @@ struct pf g_all_pfs[MAXPF][NUM_SUPPORTED_VERSIONS] = {
             7, lck_rw_alloc_init_finder_14, "__TEXT_EXEC"),
         PF_DECL_FULL("lck_rw_alloc_init finder iOS 15",
             LISTIZE({
-                0xd2800016,     /* mov x22, #0 */
-                0xf9400260,     /* ldr x0, [x19] */
-                0xd2800001,     /* mov x1, #0 */
+                0xf9400000,     /* ldr  x0, [xn, n] */
+                0xd2800001,     /* mov  x1, #0 */
+                0x94000000,     /* bl   _lck_rw_alloc_init */
+                0xf9000e60,     /* str  x0, [x19, #0x18] */
             }),
             LISTIZE({
+                0xffc0001f,     /* ignore all but Rt */
                 0xffffffff,     /* match exactly */
-                0xffffffff,     /* match exactly */
+                0xfc000000,     /* ignore branch target */
                 0xffffffff,     /* match exactly */
             }),
-            3, XNU_PF_ACCESS_32BIT, lck_rw_alloc_init_finder_15,
+            4, XNU_PF_ACCESS_32BIT, lck_rw_alloc_init_finder_15,
             "com.apple.filesystems.lifs", "__TEXT_EXEC", NULL),
     },
     {
