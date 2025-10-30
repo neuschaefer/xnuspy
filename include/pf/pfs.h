@@ -2388,16 +2388,26 @@ struct pf g_all_pfs[MAXPF][NUM_SUPPORTED_VERSIONS] = {
         PF_UNUSED,
         PF_DECL32("proc_ref,proc_rele finder iOS 15",
             LISTIZE({
-                0xaa1903f8,     /* mov x24, x25 */
-                0xaa1803e0,     /* mov x0, x24 */
-                0x52800021,     /* mov w1, #1 */
+                0xaa1403e0,     /* mov x0, x20 */
+                0x94000000,     /* bl _proc_rele */
+                0xf9400eb5,     /* ldr x21, [x21, #0x18] */
+                0xb4000000,     /* cbz x21, n */
+                0xf94012a8,     /* ldr x8, [x21, #0x20] */
+                0x9356fd08,     /* asr x8, x8, #22 */
+                0xf9400d14,     /* ldr x20, [x8, #0x18] */
+                0xaa1403e0,     /* mov x0, x20 */
             }),
             LISTIZE({
                 0xffffffff,     /* match exactly */
+                0xfc000000,     /* ignore immediate */
+                0xffffffff,     /* match exactly */
+                0xfc000000,     /* ignore immediate */
+                0xffffffff,     /* match exactly */
+                0xffffffff,     /* match exactly */
                 0xffffffff,     /* match exactly */
                 0xffffffff,     /* match exactly */
             }),
-            3, proc_ref_rele_finder_15, "__TEXT_EXEC"),
+            8, proc_ref_rele_finder_15, "__TEXT_EXEC"),
     },
     {
         PF_DECL_FULL("lck_mtx_lock finder iOS 13",
