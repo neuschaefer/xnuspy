@@ -1314,18 +1314,27 @@ struct pf g_all_pfs[MAXPF][NUM_SUPPORTED_VERSIONS] = {
         PF_UNUSED,
         PF_DECL32("current_proc finder iOS 15",
             LISTIZE({
-                0x39402a88,     /* ldrb w8, [x20, #0xa] */
-                0x35000008,     /* cbnz w8, n */
-                0x94000000,     /* bl current_proc */
-                0xf9000e80,     /* str x0, [x20, #0x18] */
+                0xaa0003e0,     /* mov     x0, xN */
+                0xd2800001,     /* mov     x1, #0 */
+                0xd2800002,     /* mov     x2, #0 */
+                0x52800043,     /* mov     w3, #2 */
+                0x94000000,     /* bl n */
+                0xf9400000,     /* ldr x0, [Xn, n] */
+                0x94000000,     /* bl n */
+                0x94000000,     /* bl n */
+
             }),
             LISTIZE({
+                0xffe0ffff,     /* ignore Rm */
                 0xffffffff,     /* match exactly */
-                0xffc0001f,     /* ignore signed offset */
+                0xffffffff,     /* match exactly */
+                0xffffffff,     /* match exactly */
                 0xfc000000,     /* ignore immediate */
-                0xffffffff,     /* match exactly */
+                0xffc0001f,     /* ignore Rn & immediate */
+                0xfc000000,     /* ignore immediate */
+                0xfc000000,     /* ignore immediate */
             }),
-            4, current_proc_finder_15, "__TEXT_EXEC"),
+            8, current_proc_finder_15, "__TEXT_EXEC"),
     },
     {
         PF_DECL_FULL("proc stuff finder 1 iOS 13",

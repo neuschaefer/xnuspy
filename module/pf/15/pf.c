@@ -68,15 +68,14 @@ bool proc_name_snprintf_strlen_finder_15(xnu_pf_patch_t *patch,
     return true;
 }
 
-/* Confirmed working 15.0 */
+/* Confirmed working 15.0-15.8 */
 bool current_proc_finder_15(xnu_pf_patch_t *patch, void *cacheable_stream){
-    /* This matches four places inside _eval, all of which have a branch
-     * to current_proc two instructions down */
+    /* The next instruction after the pattern is a call to current_proc */
     xnu_pf_disable_patch(patch);
 
     uint32_t *opcode_stream = cacheable_stream;
 
-    uint32_t *current_proc = get_branch_dst_ptr(opcode_stream + 2);
+    uint32_t *current_proc = get_branch_dst_ptr(opcode_stream + 8);
 
     g_current_proc_addr = xnu_ptr_to_va(current_proc);
 
