@@ -14,7 +14,7 @@ uint64_t g_proc_ref_addr = 0;
 uint64_t g_proc_rele_addr = 0;
 uint64_t g_ipc_object_lock_addr = 0;
 
-/* Confirmed working 15.0 */
+/* Confirmed working 15.0 - 15.8 */
 bool ipc_port_release_send_finder_15(xnu_pf_patch_t *patch, 
         void *cacheable_stream){
     /* will land in _exception_deliver in iOS 15. There is a sequence
@@ -23,11 +23,15 @@ bool ipc_port_release_send_finder_15(xnu_pf_patch_t *patch,
      * resolving the branches. We get about 26 hits for these matches
      * and masks, so let's make sure we're actually in _exception_deliver.
      * If we are, then the two instructions behind where we landed will be
-     * mov x27, #0 and mov x26, x0 */
+     *  (15.0 - 15.3)                     (15.4 - 15.8)
+     *   mov x26, x0          or           mov x27, x0
+     *   mov x27, #0                       mov x26, #0
+     */
     uint32_t *opcode_stream = cacheable_stream;
 
-    if(opcode_stream[-1] != 0xd280001b && opcode_stream[-2] != 0xaa0003fa)
-        return false;
+    if     (opcode_stream[-2] == 0xaa0003fa && opcode_stream[-1] == 0xd280001b) {}
+    else if(opcode_stream[-2] == 0xaa0003fb && opcode_stream[-1] == 0xd280001a) {}
+    else return false;
 
     xnu_pf_disable_patch(patch);
 
