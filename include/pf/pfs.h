@@ -93,16 +93,18 @@ struct pf g_all_pfs[MAXPF][NUM_SUPPORTED_VERSIONS] = {
             "__TEXT_EXEC", NULL),
         PF_DECL_FULL("kalloc_external finder iOS 15",
             LISTIZE({
-                0x910022f7,     /* add x23, x23, #0x8 */
+                0x910022e0,     /* add xNN, x23, #0x8 */
                 0x910043a8,     /* add x8, x29, #0x10 */
                 0xf9000fe8,     /* str w8, [sp, #0x18] */
+                0x52808008,     /* mov w8, #0x400 */
             }),
             LISTIZE({
+                0xffffffe0,     /* ignore Rd */
                 0xffffffff,     /* match exactly */
-                0xffffffff,     /* match exactly */
+                0xffffffff,     /* ignore offset */
                 0xffffffff,     /* match exactly */
             }),
-            3, XNU_PF_ACCESS_32BIT, kalloc_external_finder_14,
+            4, XNU_PF_ACCESS_32BIT, kalloc_external_finder_14,
             "com.apple.driver.AppleMobileFileIntegrity",
             "__TEXT_EXEC", NULL),
     },

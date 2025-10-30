@@ -12,7 +12,7 @@
 uint64_t g_kalloc_external_addr = 0;
 uint64_t g_kfree_ext_addr = 0;
 
-/* Confirmed working 14.0 - 15.0 */
+/* Confirmed working 14.0 - 15.8 */
 bool kalloc_external_finder_14(xnu_pf_patch_t *patch, void *cacheable_stream){
     /* We've landed somewhere inside AMFI, kalloc_external is the
      * branch six instructions down */
