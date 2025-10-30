@@ -1091,26 +1091,20 @@ struct pf g_all_pfs[MAXPF][NUM_SUPPORTED_VERSIONS] = {
         PF_UNUSED,
         PF_DECL32("vm_deallocate finder iOS 15",
             LISTIZE({
-                0x94000000,     /* bl n */
-                0xf900001f,     /* str xzr, [Xn, n] */
-                0x3900001f,     /* strb wzr, [Xn, n] */
-                0xb4000000,     /* cbz Xn, n */
-                0x0,            /* ignore this instruction */
-                0x0,            /* ignore this instruction */
-                0xaa0003e1,     /* mov x1, Xn */
-                0xaa0003e2,     /* mov x2, Xn */
+                0x94000000,     /* bl _vm_deallocate */
+                0xf900007f,     /* str xzr, [x19, n] */
+                0xb8000008,     /* ldr w8, [x19, n] */
+                0x12147908,     /* and w8, w8, #0xfffff7ff */
+                0xb8000008,     /* str w8, [x19, n] */
             }),
             LISTIZE({
                 0xfc000000,     /* ignore immediate */
-                0xffc0001f,     /* ignore Rn & immediate */
-                0xffc0001f,     /* ignore Rn & immediate */
-                0xff000000,     /* ignore Rn & immediate */
-                0x0,            /* ignore this instruction */
-                0x0,            /* ignore this instruction */
-                0xffe0ffff,     /* ignore Rn */
-                0xffe0ffff,     /* ignore Rn */
+                0xffff00ff,     /* ignore immediate */
+                0xfc00001f,     /* ignore immediate */
+                0xffffffff,     /* match exactly */
+                0xfc00001f,     /* ignore immediate */
             }),
-            8, vm_deallocate_finder_15, "__TEXT_EXEC"),
+            5, vm_deallocate_finder_15, "__TEXT_EXEC"),
     },
     {
         PF_DECL_FULL("kernel_thread_start,thread_deallocate finder iOS 13",
