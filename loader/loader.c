@@ -179,7 +179,7 @@ int main(int argc, char **argv, const char **envp){
 
     /* If you want to modify this string, don't remove rootdev=md0 and
      * use_contiguous_hint=0. Make sure to keep the newline. */
-    err = pongo_send_command(pongo_device, "xargs rootdev=md0"
+    err = pongo_send_command(pongo_device, "xargs"
             " use_contiguous_hint=0 msgbuf=0x3c000"
 #if defined(XNUSPY_SERIAL)
             " -v serial=3"
