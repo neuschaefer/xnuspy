@@ -17,26 +17,13 @@ uint64_t g_ipc_object_lock_addr = 0;
 /* Confirmed working 15.0 - 15.8 */
 bool ipc_port_release_send_finder_15(xnu_pf_patch_t *patch, 
         void *cacheable_stream){
-    /* will land in _exception_deliver in iOS 15. There is a sequence
-     * where they lock/release 4 IPC ports if they are non-null. This
-     * patchfinder will take us here, then it's just a matter of
-     * resolving the branches. We get about 26 hits for these matches
-     * and masks, so let's make sure we're actually in _exception_deliver.
-     * If we are, then the two instructions behind where we landed will be
-     *  (15.0 - 15.3)                     (15.4 - 15.8)
-     *   mov x26, x0          or           mov x27, x0
-     *   mov x27, #0                       mov x26, #0
-     */
+    /* We land in IOUserClient::releaseNotificationPort, which does almost
+     * nothing but call ipc_object_lock and ipc_port_release_send_and_unlock */
     uint32_t *opcode_stream = cacheable_stream;
-
-    if     (opcode_stream[-2] == 0xaa0003fa && opcode_stream[-1] == 0xd280001b) {}
-    else if(opcode_stream[-2] == 0xaa0003fb && opcode_stream[-1] == 0xd280001a) {}
-    else return false;
-
     xnu_pf_disable_patch(patch);
 
-    uint32_t *ipc_port_release_send_and_unlock = get_branch_dst_ptr(opcode_stream + 6);
-    uint32_t *ipc_object_lock = get_branch_dst_ptr(opcode_stream + 4);
+    uint32_t *ipc_object_lock = get_branch_dst_ptr(opcode_stream + 1);
+    uint32_t *ipc_port_release_send_and_unlock = get_branch_dst_ptr(opcode_stream + 3);
 
     g_ipc_port_release_send_and_unlock_addr = xnu_ptr_to_va(ipc_port_release_send_and_unlock);
     g_ipc_object_lock_addr = xnu_ptr_to_va(ipc_object_lock);
