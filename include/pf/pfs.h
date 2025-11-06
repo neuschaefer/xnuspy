@@ -1627,24 +1627,26 @@ struct pf g_all_pfs[MAXPF][NUM_SUPPORTED_VERSIONS] = {
             5, ipc_port_release_send_finder_13, "__TEXT_EXEC"),
         PF_DECL32("ipc_object_lock/ipc_port_release_send_and_unlock finder iOS 15",
             LISTIZE({
-                0x91000408,     /* add x8, xn, #1 */
-                0xf100091f,     /* cmp x8, 2 */
-                0x540000a3,     /* b.lo 0x1c */
-                0xaa0003e0,     /* mov x0, xn */
-                0x94000000,     /* bl _ipc_object_lock */
-                0xaa0003e0,     /* mov x0, xn */
-                0x94000000      /* bl _ipc_port_release_send_and_unlock */
+                0xaa0003f3,     /* mov x19, x0 */
+                0x94000000,     /* bl ipc_object_lock */
+                0xaa1303e0,     /* mov x0, x19 */
+                0x94000000,     /* bl ipc_port_release_send_and_unlock */
+                0xa9417bfd,     /* ldp x29, x30, [sp, #0x10] */
+                0xa8c24ff4,     /* ldp x20, x19, [sp], #0x20 */
+                0x52800000,     /* mov w0, #0 */
+                0xd65f03c0,     /* ret */
             }),
             LISTIZE({
-                0xfffffc1f,     /* ignore Rn */
+                0xffffffff,     /* match exactly */
+                0xfc000000,     /* ignore immediate */
+                0xffffffff,     /* match exactly */
+                0xfc000000,     /* ignore immediate */
                 0xffffffff,     /* match exactly */
                 0xffffffff,     /* match exactly */
-                0xffe0ffff,     /* ignore Rd */
-                0xfc000000,     /* ignore immediate */
-                0xffe0ffff,     /* ignore Rd */
-                0xfc000000,     /* ignore immediate */
+                0xffffffff,     /* match exactly */
+                0xffffffff,     /* match exactly */
             }),
-            7, ipc_port_release_send_finder_15, "__TEXT_EXEC"),
+            8, ipc_port_release_send_finder_15, "__TEXT_EXEC"),
     },
     {
         PF_DECL32("lck_rw_free finder iOS 13",
